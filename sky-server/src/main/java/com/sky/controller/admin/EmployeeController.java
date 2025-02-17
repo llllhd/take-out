@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -101,7 +102,7 @@ public class EmployeeController {
      * 分页查询员工
      * 
      * 
-     * @param page
+     * @param employeePageQueryDTO
      * @return
      */
     @GetMapping("/page")
@@ -110,6 +111,20 @@ public class EmployeeController {
         log.info("分页查询员工：{}", employeePageQueryDTO);
         PageResult pageResult = employeeService.pageQuery(employeePageQueryDTO);
         return Result.success(pageResult);
+    }
+
+    /**
+     * 启用禁用员工账号
+     * 
+     * @param
+     * @return
+     */
+    @PostMapping("status/{status}")
+    @ApiOperation("启用禁用员工账号")
+    public Result startOrStop(@PathVariable int status, long id) {
+        log.info("启用禁用员工账号：{} {}", status, id);
+        employeeService.startOrStop(status, id);
+        return Result.success();
     }
 
 }
