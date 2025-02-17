@@ -1,9 +1,11 @@
 package com.sky.controller.admin;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,8 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.sky.constant.JwtClaimsConstant;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
+import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
 import com.sky.properties.JwtProperties;
+import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.EmployeeService;
 import com.sky.utils.JwtUtil;
@@ -29,7 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/admin/employee")
 @Slf4j
-@Api("员工相关接口")
+@Api(tags = "员工相关接口")
 public class EmployeeController {
 
     @Autowired
@@ -50,7 +54,7 @@ public class EmployeeController {
 
         Employee employee = employeeService.login(employeeLoginDTO);
 
-        //登录成功后，生成jwt令牌
+        // 登录成功后，生成jwt令牌
         Map<String, Object> claims = new HashMap<>();
         claims.put(JwtClaimsConstant.EMP_ID, employee.getId());
         String token = JwtUtil.createJWT(
@@ -91,6 +95,21 @@ public class EmployeeController {
         log.info("新增员工：{}", employeeDTO);
         employeeService.save(employeeDTO);
         return Result.success();
+    }
+
+    /**
+     * 分页查询员工
+     * 
+     * 
+     * @param page
+     * @return
+     */
+    @GetMapping("/page")
+    @ApiOperation("分页查询员工")
+    public Result<PageResult> page(EmployeePageQueryDTO employeePageQueryDTO) {
+        log.info("分页查询员工：{}", employeePageQueryDTO);
+        PageResult pageResult = employeeService.pageQuery(employeePageQueryDTO);
+        return Result.success(pageResult);
     }
 
 }
